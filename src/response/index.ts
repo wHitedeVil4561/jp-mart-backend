@@ -77,7 +77,7 @@ export function error(req:Request, res:Response, error:any, code:number) {
           ? lngMsg[lng][error.msgCode]
           : lngMsg["en"][error.msgCode]) ||
         error.msgCode,
-      result: [],
+      result: error.data ?? {},
     };
     return res.status(code).json(response);
   } catch (error) {
