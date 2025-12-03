@@ -38,5 +38,6 @@
     "TOTAL_LOGIN": "You've reached the maximum login limits. Please logout of other devices and login again.",
     "WRONG_PASS": "Incorrect password",
     "INVALID_ROUTE": "Invalid route",
-    "MISSING_API_KEY": "Missing API key"
-  }
+    "MISSING_API_KEY": "Missing API key",
+    "BAD_REQUREST":"Bad request"
+    }
