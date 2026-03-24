@@ -1,7 +1,7 @@
 import {Request, Response}  from 'express';
 import {promises as fs} from 'fs';
 import path ,{dirname} from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,8 +22,10 @@ const lngMsg: { [key: string]: any } = {};
         })
         .map(async (file: string) => {
           const filename = file.slice(0, -5); // Remove '.json'
-          const lng = await import(path.join(langDir, file),{
-            assert: {
+          const filePath = path.join(langDir, file);
+          const fileUrl = pathToFileURL(filePath).href;
+          const lng = await import(fileUrl,{
+            with: {
               type: "json",
             },
           }); // Dynamic import
@@ -58,26 +60,25 @@ export function success(req:Request, res:Response, result:any, code:number) {
       statusCode: 500,
       message: lngMsg[lng]
         ? lngMsg[lng]["SOMETHING_WRONG"]
-        : lngMsg["en"]["SOMETHING_WRONG"],
+        : "SOMETHING_WRONG",
       result: [],
-      time: Date.now(),
     });
   }
 }
 
-export function error(req:Request, res:Response, error:any, code:number) {
+export function error(req:Request, res:Response, result:any, code:number) {
   const lng = req.headers["accept-language"] ?? "en";
-  console.log(lng);
   try {
     const response = {
       success: false,
       statusCode: code,
       message:
         (lngMsg[lng]
-          ? lngMsg[lng][error.msgCode]
-          : lngMsg["en"][error.msgCode]) ||
-        error.msgCode,
-      result: error.data ?? {},
+          ? lngMsg[lng][result.msgCode]
+          : lngMsg["en"][result.msgCode]) ||
+        result.msgCode,
+      result: result.data ? result.data : [],
+      time: Date.now(),
     };
     return res.status(code).json(response);
   } catch (error) {
@@ -86,10 +87,8 @@ export function error(req:Request, res:Response, error:any, code:number) {
       statusCode: 500,
       message: lngMsg[lng]
         ? lngMsg[lng]["SOMETHING_WRONG"]
-        : lngMsg["en"]["SOMETHING_WRONG"],
+        : "SOMETHING_WRONG",
       result: [],
-      time: Date.now(),
     });
   }
 }
-

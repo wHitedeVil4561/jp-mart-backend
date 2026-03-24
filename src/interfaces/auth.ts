@@ -4,7 +4,7 @@
  */
 
 export interface Admin {
-  country_code?: string;
+  country_code: string;
   email: string;
   name: string;
   password: string;

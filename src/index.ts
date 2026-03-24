@@ -1,8 +1,7 @@
-import express, { Application } from "express";
 import {ENV} from './config/env.constant.js';
+import express, { Application } from "express";
 import router from './routes/index.js';
 import bodyparser from 'body-parser';
-
 const app:Application = express();
 const port = ENV.PORT;
 

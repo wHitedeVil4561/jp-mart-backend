@@ -1,7 +1,7 @@
-import {PrismaClient} from "@prisma/client";
+import {prisma} from "./db.js";
 import { Admin } from "../interfaces/index.js";
-const prisma = new PrismaClient();
 type AdminParams = Pick<Admin, 'email' | 'phone'> & {id:string};
+type CreateAdminParams = Pick<Admin, 'name' | 'email' | 'country_code' | 'phone' | 'password'>;
 export async function queryAdmin(params:Partial<AdminParams>) {
     try{
         const admin = await prisma.admin.findFirst({
@@ -12,10 +12,17 @@ export async function queryAdmin(params:Partial<AdminParams>) {
                 ]
             }
         });
-        console.log(admin);
         return admin
     }catch(err){
-        console.log(err);
+        return false
+    }
+}
+
+export async function createAdmin(params:CreateAdminParams) {
+    try{
+        const newAdmin = await prisma.admin.create({data:params});
+        return newAdmin
+    }catch(err){
         return false
     }
 }
